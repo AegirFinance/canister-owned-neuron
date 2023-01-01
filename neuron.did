@@ -1,0 +1,6 @@
+service : (
+  principal,
+) -> {
+  neuronId : () -> (nat64) query;
+  owner : () -> (principal) query;
+}
