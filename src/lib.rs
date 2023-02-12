@@ -4,13 +4,16 @@
 * Maintainer : Aegir <0xAegir@protonmail.com>
 * Stability  : Experimental
 */
-use ic_cdk::export::{
-    candid::CandidType,
-    serde::{Deserialize, Serialize},
-    Principal,
+use ic_cdk::{
+    api,
+    export::{
+        candid::{ CandidType, Encode },
+        Principal,
+    },
+    storage,
 };
-use serde::{Deserialize, Serialize};
-use serde_cbor::Serializer;
+// use serde::{Deserialize, Serialize};
+// use serde_cbor::Serializer;
 use std::cell::RefCell;
 
 thread_local! {
@@ -19,11 +22,11 @@ thread_local! {
     static NEURON_ID: RefCell<u64> = RefCell::new(0);
 }
 
-#[init]
+#[ic_cdk_macros::init]
 fn init(
-    owner: Principal,
+    owner: Option<Principal>,
 ) {
-    OWNER.with(|o| *o.borrow_mut() = owner);
+    OWNER.with(|o| *o.borrow_mut() = owner.unwrap_or_else(|| api::caller()));
 }
 
 #[ic_cdk_macros::query]
@@ -31,46 +34,29 @@ fn owner() -> Principal {
     OWNER.with(|o| (*o.borrow()).clone())
 }
 
-#[derive(CandidType, Serialize, Debug)]
+#[derive(CandidType, Debug)]
 struct Message {
     pub contents: String,
 }
 
+// Test candid-encoding inside a canister.
 #[ic_cdk_macros::update]
-async fn claim() -> Vec<u8> {
-    // serialize a message
-    let message = Message {
-        contents: "Hello world!".to_string(),
-    };
-
-    let serialized_message = serialize(message);
-    serialized_message
-
-    // sign the message
-
-    // return the signature
-
-    // TODO: send the message via http outcalls
+async fn encode(to: String) -> Vec<u8> {
+    Encode!(&Message {
+        contents: format!("Hello {to}!"),
+    }).unwrap()
 }
 
-fn serialize(m: Message) -> Vec<u8> {
-    let mut data = vec![];
-    let mut serializer = Serializer::new(&mut data);
-    serializer.self_describe().unwrap();
-    m.serialize(&mut serializer).unwrap();
-    data
-}
-
-#[pre_upgrade]
+#[ic_cdk_macros::pre_upgrade]
 fn pre_upgrade() {
     let owner = OWNER.with(|x| x.borrow().clone());
     let neuron_id = NEURON_ID.with(|x| x.borrow().clone());
-    ic::stable_store((owner, neuron_id)).unwrap();
+    storage::stable_save((owner, neuron_id)).unwrap();
 }
 
-#[post_upgrade]
+#[ic_cdk_macros::post_upgrade]
 fn post_upgrade() {
-    let (owner, neuron_id): (Principal, u64) = ic::stable_restore().unwrap();
+    let (owner, neuron_id): (Principal, u64) = storage::stable_restore().unwrap();
     OWNER.with(|o| *o.borrow_mut() = owner);
     NEURON_ID.with(|n| *n.borrow_mut() = neuron_id);
 }

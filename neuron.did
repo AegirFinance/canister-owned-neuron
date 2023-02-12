@@ -1,6 +1,6 @@
 service : (
-  principal,
+  opt principal,
 ) -> {
-  neuronId : () -> (nat64) query;
   owner : () -> (principal) query;
+  encode : (text) -> (blob);
 }
