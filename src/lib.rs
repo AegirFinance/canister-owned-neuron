@@ -16,6 +16,10 @@ use ic_cdk::{
 // use serde_cbor::Serializer;
 use std::cell::RefCell;
 
+mod auth;
+mod signing;
+mod transport;
+
 thread_local! {
     // TODO: Use the canister controllers to authenticate messages
     static OWNER: RefCell<Principal> = RefCell::new(Principal::anonymous());

@@ -13,8 +13,13 @@ opt-level = 'z'
 panic = 'abort'
 
 [dependencies]
+anyhow = "1.0.34"
 serde = "1"
+serde_cbor = "0.11.2"
 candid = "0.7.4"
+hex = {version = "0.4.2", features = ["serde"] }
+ic-agent = { version = "0.23.0", default-features = false, features = [ "pem" ] }
 ic-kit = "0.4.3"
 ic-cdk = "0.5"
 ic-cdk-macros = "0.5"
+getrandom = { version = "0.2.8", features = [ "js" ] }
