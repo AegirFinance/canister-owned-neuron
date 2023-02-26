@@ -20,7 +20,7 @@ candid = "0.7.4"
 hex = {version = "0.4.2", features = ["serde"] }
 ic-agent = { version = "0.23.0", default-features = false, features = [ "pem" ] }
 ic-kit = "0.4.3"
-ic-cdk = "0.6.5"
-ic-cdk-macros = "0.6.5"
+ic-cdk = "0.7.1"
+ic-cdk-macros = "0.6.9"
 getrandom = { version = "0.2.8", features = [ "js" ] }
 url = "2.3.1"

@@ -938,12 +938,11 @@ dependencies = [
 
 [[package]]
 name = "ic-cdk"
-version = "0.6.10"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c98b304a2657bad15bcb547625a018e13cf596676d834cfd93023395a6e2e03a"
+checksum = "3e5b73294ba9d7b2c01bd677505c7eee8dd48dff9aa663bec0f168a0c6cc5dc8"
 dependencies = [
  "candid 0.8.4",
- "cfg-if",
  "ic-cdk-macros",
  "ic0",
  "serde",
@@ -1227,7 +1226,7 @@ dependencies = [
  "getrandom",
  "hex",
  "ic-agent",
- "ic-cdk 0.6.10",
+ "ic-cdk 0.7.1",
  "ic-cdk-macros",
  "ic-kit",
  "serde",

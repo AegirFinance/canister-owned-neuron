@@ -36,18 +36,30 @@ fn owner() -> Principal {
     OWNER.with(|o| (*o.borrow()).clone())
 }
 
-#[derive(CandidType, Debug)]
-struct Message {
-    pub contents: String,
-}
+// Test encoding a struct to candid within a container. Works with older version of ic-cdk. but
+// something changed.
+//
+// #[derive(CandidType, Debug)]
+// struct Message {
+//     pub contents: String,
+// }
+// 
+// // Test candid-encoding inside a canister.
+// #[ic_cdk_macros::update]
+// async fn encode(to: String) -> Vec<u8> {
+//     Encode!(&Message {
+//         contents: format!("Hello {to}!"),
+//     })
+//     .unwrap()
+// }
 
-// Test candid-encoding inside a canister.
 #[ic_cdk_macros::update]
-async fn encode(to: String) -> Vec<u8> {
-    Encode!(&Message {
-        contents: format!("Hello {to}!"),
-    })
-    .unwrap()
+async fn call(canister_id: Principal, method_name: String) -> Vec<u8> {
+    let agent = auth::get_agent(&auth::AuthInfo::NoAuth, &auth::IC_URL).unwrap();
+    agent.query(
+        &canister_id,
+        method_name,
+    ).call().await.unwrap()
 }
 
 #[ic_cdk_macros::pre_upgrade]
