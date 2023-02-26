@@ -7,7 +7,7 @@
 use ic_cdk::{
     api,
     export::{
-        candid::{ CandidType, Encode },
+        candid::{CandidType, Encode},
         Principal,
     },
     storage,
@@ -27,9 +27,7 @@ thread_local! {
 }
 
 #[ic_cdk_macros::init]
-fn init(
-    owner: Option<Principal>,
-) {
+fn init(owner: Option<Principal>) {
     OWNER.with(|o| *o.borrow_mut() = owner.unwrap_or_else(|| api::caller()));
 }
 
@@ -48,7 +46,8 @@ struct Message {
 async fn encode(to: String) -> Vec<u8> {
     Encode!(&Message {
         contents: format!("Hello {to}!"),
-    }).unwrap()
+    })
+    .unwrap()
 }
 
 #[ic_cdk_macros::pre_upgrade]

@@ -1,15 +1,13 @@
 //! All the common functionality.
 
+use crate::transport::OutboundHttpTransport;
 use anyhow::{anyhow, bail, Context};
 use candid::{
     parser::typing::{check_prog, TypeEnv},
     types::Function,
     IDLProg, Principal,
 };
-use ic_agent::{
-    identity::AnonymousIdentity,
-    Agent, Identity,
-};
+use ic_agent::{identity::AnonymousIdentity, Agent, Identity};
 use serde_cbor::Value;
 use std::sync::Arc;
 
@@ -29,12 +27,7 @@ pub enum AuthInfo {
 pub fn get_agent(auth: &AuthInfo, ic_url: &str) -> anyhow::Result<Agent> {
     let timeout = std::time::Duration::from_secs(60 * 5);
     let builder = Agent::builder()
-        .with_transport(
-            // TODO: Replace with outbount HTTP Calls
-            ic_agent::agent::http_transport::ReqwestHttpReplicaV2Transport::create({
-                ic_url
-            })?,
-        )
+        .with_transport(OutboundHttpTransport::create(ic_url)?)
         .with_ingress_expiry(Some(timeout));
 
     let identity = get_identity(auth)?;

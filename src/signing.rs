@@ -1,10 +1,6 @@
-use crate::auth::{AuthInfo, get_agent};
+use crate::auth::{get_agent, AuthInfo};
 use anyhow::{anyhow, Context};
-use ic_agent::{
-    agent::UpdateBuilder,
-    export::Principal,
-    RequestId,
-};
+use ic_agent::{agent::UpdateBuilder, export::Principal, RequestId};
 use serde::{Deserialize, Serialize};
 use serde_cbor::Value;
 use std::convert::TryFrom;
@@ -69,12 +65,7 @@ impl Ingress {
                 ) {
                     let sender = Principal::try_from(sender)?;
                     let canister_id = Principal::try_from(canister_id)?;
-                    return Ok((
-                        sender,
-                        canister_id,
-                        method_name.to_string(),
-                        arg.clone(),
-                    ));
+                    return Ok((sender, canister_id, method_name.to_string(), arg.clone()));
                 }
             }
         }
@@ -106,10 +97,14 @@ pub fn sign(
 ) -> anyhow::Result<SignedMessageWithRequestId> {
     let ingress_expiry = Duration::from_secs(5 * 60);
 
-    let signed_update = UpdateBuilder::new(&get_agent(auth, ic_url)?, canister_id, method_name.to_string())
-        .with_arg(args)
-        .expire_after(ingress_expiry)
-        .sign()?;
+    let signed_update = UpdateBuilder::new(
+        &get_agent(auth, ic_url)?,
+        canister_id,
+        method_name.to_string(),
+    )
+    .with_arg(args)
+    .expire_after(ingress_expiry)
+    .sign()?;
 
     let content = hex::encode(signed_update.signed_update);
     let request_id = signed_update.request_id;

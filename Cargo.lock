@@ -937,13 +937,26 @@ dependencies = [
 ]
 
 [[package]]
-name = "ic-cdk-macros"
-version = "0.5.7"
+name = "ic-cdk"
+version = "0.6.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "954a421ace8b8c8e52d2847c4aa68c80101396134c800ecb12f63457937c4ab4"
+checksum = "c98b304a2657bad15bcb547625a018e13cf596676d834cfd93023395a6e2e03a"
 dependencies = [
- "candid 0.7.18",
- "ic-cdk",
+ "candid 0.8.4",
+ "cfg-if",
+ "ic-cdk-macros",
+ "ic0",
+ "serde",
+ "serde_bytes",
+]
+
+[[package]]
+name = "ic-cdk-macros"
+version = "0.6.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "70973af84e5dbc2d967257c22dae31d6f876801541aa741d8cfec1e95d205560"
+dependencies = [
+ "candid 0.8.4",
  "proc-macro2",
  "quote",
  "serde",
@@ -973,7 +986,7 @@ dependencies = [
  "bincode",
  "candid 0.7.18",
  "futures",
- "ic-cdk",
+ "ic-cdk 0.5.7",
  "ic-kit-macros",
  "serde",
  "serde_bytes",
@@ -1019,6 +1032,12 @@ dependencies = [
  "pairing",
  "sha2 0.9.9",
 ]
+
+[[package]]
+name = "ic0"
+version = "0.18.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "978b91fc78de9d2eb0144db717839cde3b35470199ea51aca362cb6310e93dfd"
 
 [[package]]
 name = "idna"
@@ -1208,11 +1227,12 @@ dependencies = [
  "getrandom",
  "hex",
  "ic-agent",
- "ic-cdk",
+ "ic-cdk 0.6.10",
  "ic-cdk-macros",
  "ic-kit",
  "serde",
  "serde_cbor",
+ "url",
 ]
 
 [[package]]
