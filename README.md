@@ -119,7 +119,8 @@ $ ./quill local send stake.json
 - Use HTTP outcalls so the canister can call into the governance canister itself.
   - I had a look into this using the rust `ic-agent` crate. However, it has
     some dependencies which make compiling it to wasm (so it can run in a
-    canister) very difficult.
+    canister) very difficult. This approach might be the cleanest, but would
+    need some heavy reverse-engineering.
   - It might be worth trying the Javascript `@dfinity/agent` library. That
     would probably be much simpler to get compiling into wasm, but would mean
     we need to use [Azle](https://github.com/demergent-labs/azle) to write the
