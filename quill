@@ -26,14 +26,14 @@ if [[ -z "$CANISTER_ID" ]]; then
 fi
 
 FLAGS=""
-if [[ "$1" == "local" ]]; then
+if [[ "$NETWORK" == "local" ]]; then
     export IC_URL="http://localhost:$(dfx info replica-port)"
     FLAGS="--insecure-local-dev-mode"
 fi
 
 IDENTITY_PEM="$(dfx identity export $(dfx identity whoami))"
 
-$QUILL \
+$QUILL $FLAGS \
     --canister-id "$CANISTER_ID" \
     --pem-file <(echo "$IDENTITY_PEM") \
     "$@"
