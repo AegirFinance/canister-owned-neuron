@@ -1,3 +1,7 @@
+> **Warning**
+> This repository is a proof-of-concept only. It has not been extensively
+> tested, and is not "production-ready". Use at your own risk.
+
 # Canister-Owned-Neurons - Beta
 
 Proof-of-concept for a canister to directly own a neuron on the IC via Threshold ECDSA.
@@ -89,3 +93,5 @@ $ ./quill local send stake.json
     would probably be much simpler to get compiling into wasm, but would mean
     we need to use [Azle](https://github.com/demergent-labs/azle) to write the
     canister.
+
+** Ideas and pull-requests are welcome! **
