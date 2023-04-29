@@ -10,12 +10,11 @@ fi
 NETWORK="${1:-local}"
 MODE="${2:-reinstall}"
 KEY_ID="${3:-dfx_test_key}"
-OWNER="$(dfx identity get-principal)"
 
 if [ -n "$MODE" ]; then
   MODE="--mode $MODE"
 fi
 
 dfx deploy --no-wallet --network $NETWORK signer \
-	--argument="(record { owners=vec {principal \"$OWNER\"}; key_id=\"$KEY_ID\";})" \
+	--argument="(record { key_id=\"$KEY_ID\" })" \
     $MODE

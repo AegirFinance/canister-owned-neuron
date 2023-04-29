@@ -10,21 +10,20 @@ use ic_cdk::{
 use ic_ledger_types::{AccountIdentifier, Subaccount, DEFAULT_SUBACCOUNT};
 use std::{cell::RefCell, str::FromStr};
 
+mod controller;
+
 thread_local! {
-    static OWNERS: RefCell<Vec<Principal>> = RefCell::new(Vec::default());
     static KEY_ID: RefCell<EcdsaKeyId> = RefCell::new(EcdsaKeyIds::TestKeyLocalDevelopment.to_key_id());
 }
 
 #[derive(CandidType, Deserialize)]
 struct StableState {
-    owners: Vec<Principal>,
     key_id: EcdsaKeyId,
 }
 
 #[pre_upgrade]
 fn pre_upgrade() {
     let state = StableState {
-        owners: OWNERS.with(|o| o.borrow().clone()),
         key_id: KEY_ID.with(|k| k.borrow().clone()),
     };
     storage::stable_save((state,)).unwrap();
@@ -33,13 +32,6 @@ fn pre_upgrade() {
 #[post_upgrade]
 fn post_upgrade() {
     let (s,): (StableState,) = storage::stable_restore().unwrap();
-    OWNERS.with(|o| {
-        let mut owners = o.borrow_mut();
-        owners.clear();
-        for p in s.owners.iter() {
-            owners.push(*p);
-        }
-    });
     KEY_ID.with(|k| {
         *k.borrow_mut() = s.key_id;
     });
@@ -101,41 +93,15 @@ pub enum EcdsaCurve {
 
 #[derive(CandidType, Deserialize, Serialize, Debug, Clone)]
 struct InitArgs {
-    pub owners: Vec<Principal>,
     pub key_id: String,
 }
 
 #[init]
 async fn init(args: InitArgs) {
     let parsed_key_id: EcdsaKeyId = EcdsaKeyIds::try_from(args.key_id).unwrap().to_key_id();
-    OWNERS.with(|owners| {
-        let mut o = owners.borrow_mut();
-        for p in args.owners.iter() {
-            o.push(*p);
-        }
-    });
     KEY_ID.with(|key| {
         let mut k = key.borrow_mut();
         *k = parsed_key_id;
-    });
-}
-
-fn require_owner(user: &Principal) {
-    assert!(
-        OWNERS.with(|owners| (*owners.borrow()).contains(user)),
-        "Caller is not an owner"
-    );
-}
-
-#[update]
-async fn set_owners(new_owners: Vec<Principal>) {
-    require_owner(&api::caller());
-    OWNERS.with(|owners| {
-        let mut o = owners.borrow_mut();
-        o.clear();
-        for p in new_owners.iter() {
-            o.push(*p);
-        }
     });
 }
 
@@ -165,7 +131,7 @@ async fn public_key() -> Result<PublicKeyReply, String> {
 
 #[update]
 async fn sign(message: Vec<u8>) -> Result<SignatureReply, String> {
-    require_owner(&api::caller());
+    controller::require(&api::caller()).await;
     assert!(message.len() == 32);
 
     let request = SignWithECDSA {
