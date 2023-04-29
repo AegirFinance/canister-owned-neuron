@@ -6,6 +6,34 @@
 
 Proof-of-concept for a canister to directly own a neuron on the IC via Threshold ECDSA.
 
+## Architecture
+
+This proof-of-concept has two components.
+- A fork of the [quill](https://github.com/AegirFinance/quill) command-line
+  tool to create and submit messages to the NNS.
+- A `signer` canister which makes Threshold ECDSA requests to sign messages
+  on behalf of quill.
+
+The quill fork uses the signer canister to sign it's messages. This means that
+the private keys which actually own any created neurons belong to the canister.
+Quill then forwards the signed message onto the NNS.
+
+Flow Diagram:
+
+```
+┌───────┐ Request    ┌─────────────────┐
+│       ├───────────►│                 │
+│ Quill │            │ Signer Canister │
+│       │◄───────────┤                 │
+│       │ Signed Req └─────────────────┘
+│       │
+│       │ Signed Req ┌─────────────────┐
+│       ├───────────►│                 │
+│       │            │ NNS Canister    │
+│       │◄───────────┤                 │
+└───────┘ Response   └─────────────────┘
+```
+
 ## Usage
 
 ### Install Dependencies
