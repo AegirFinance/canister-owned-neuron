@@ -1,6 +1,9 @@
 > **Warning**
 > This repository is a proof-of-concept only. It has not been extensively
 > tested, and is not "production-ready". Use at your own risk.
+>
+> If you want liquid staking for your ICP, without doing these steps yourself,
+> see: https://stakedicp.com
 
 # Canister-Owned-Neurons - Beta
 
