@@ -33,7 +33,7 @@ fi
 
 IDENTITY_PEM="$(dfx identity export $(dfx identity whoami))"
 
-$QUILL $FLAGS \
+$QUILL "$@" \
+    $FLAGS \
     --canister-id "$CANISTER_ID" \
-    --pem-file <(echo "$IDENTITY_PEM") \
-    "$@"
+    --pem-file <(echo "$IDENTITY_PEM")
