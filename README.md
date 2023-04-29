@@ -85,27 +85,32 @@ Then, we can use the provided quill wrapper script:
 $ ./quill ic public-ids
 ```
 
+For the rest of this document, anytime we use: `./quill local ...`, use
+`./quill ic ...` instead.
+
 ### Creating a neuron
 
 To create a neuron, we first need to transfer some ICP to the key owned by the
 signer canister. We can ask it for it's address, like:
 
 ```sh
-$ dfx canister call signer address
-("c3d69b64bc40e92e1554fb5c0fb289d72d7faa7207dbc423fe68236566e1f581")
+$ ./quill local public-ids
+Principal id: j2nlo-qsl7k-2dydm-2t74w-dtpe2-gbhkl-dsvon-fngvp-r3i7k-6ygiy-bae
+Account id: ab15a718e7732da6d6db09bf71a4a923445f21980aca1aefd33a808d549013ff
 ```
 
-Then, we can transfer some ICP to that address. Note, we must transfer at least
-1.0001 ICP to pay for the new neuron, and the ICP transfer fee.
+Then, we can transfer some ICP to that Account ID. Note, we must transfer at least
+1.0001 ICP to pay for the new neuron, and the ICP transfer fee. An example
+using dfx to transfer some from our local wallet is:
 
 ```sh
 $ dfx ledger transfer \
     --memo 0 \
     --amount 1.00010000 \
-    "c3d69b64bc40e92e1554fb5c0fb289d72d7faa7207dbc423fe68236566e1f581"
+    "ab15a718e7732da6d6db09bf71a4a923445f21980aca1aefd33a808d549013ff"
 ```
 
-At this point we are ready to stake a new neuron. Note, the amount here
+At this point we are ready to stake a new neuron. Note, the amount we stake
 excludes the extra 0.0001 ICP we sent above for the fee.
 
 ```sh
@@ -116,6 +121,7 @@ $ ./quill local neuron-stake --amount 1 --name test > stake.json
 $ ./quill local send stake.json
 ```
 
+You can also use any other quill functions.
 
 
 ## Future Work
