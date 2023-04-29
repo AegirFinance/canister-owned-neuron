@@ -1,8 +1,8 @@
 {
   "canisters": {
-    "neuron": {
-      "package": "neuron",
-      "candid": "neuron.did",
+    "signer": {
+      "package": "signer",
+      "candid": "src/signer/signer.did",
       "type": "rust"
     }
   }

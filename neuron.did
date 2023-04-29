@@ -1,6 +1,0 @@
-service : (
-  opt principal,
-) -> {
-  owner : () -> (principal) query;
-  encode : (text) -> (blob);
-}
