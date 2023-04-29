@@ -2,19 +2,20 @@
 
 set -e
 
-if [[ -z $1 ]]; then
-    printf "💎 Deploy Script:\n\n   usage: deploy <local|ic|other> [install|reinstall|upgrade] [local_test_key|test_key_1|key_1]\n\n"
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    printf "💎 Deploy Script:\n\n   usage: deploy <local|ic|other> [reinstall|upgrade] [dfx_test_key|test_key_1|key_1]\n\n"
     exit 1;
 fi
 
 NETWORK="${1:-local}"
-MODE="${2:-install}"
-KEY_ID="${3:-test_key_1}"
+MODE="${2:-reinstall}"
+KEY_ID="${3:-dfx_test_key}"
+OWNER="$(dfx identity get-principal)"
 
 if [ -n "$MODE" ]; then
   MODE="--mode $MODE"
 fi
 
 dfx deploy --no-wallet --network $NETWORK signer \
-	--argument="(record { owners=vec {principal \"$(dfx identity get-principal)\"}; key_id=\"$KEY_ID\")" \
-    --mode=$MODE
+	--argument="(record { owners=vec {principal \"$OWNER\"}; key_id=\"$KEY_ID\";})" \
+    $MODE

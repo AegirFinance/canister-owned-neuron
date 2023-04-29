@@ -128,6 +128,18 @@ fn require_owner(user: &Principal) {
 }
 
 #[update]
+async fn set_owners(new_owners: Vec<Principal>) {
+    require_owner(&api::caller());
+    OWNERS.with(|owners| {
+        let mut o = owners.borrow_mut();
+        o.clear();
+        for p in new_owners.iter() {
+            o.push(*p);
+        }
+    });
+}
+
+#[update]
 async fn get_principal() -> Result<PrincipalReply, String> {
     let public_key = get_public_key().await?;
     Ok(PrincipalReply {
@@ -201,7 +213,7 @@ impl EcdsaKeyIds {
         EcdsaKeyId {
             curve: EcdsaCurve::Secp256k1,
             name: match self {
-                Self::TestKeyLocalDevelopment => "local_test_key",
+                Self::TestKeyLocalDevelopment => "dfx_test_key",
                 Self::TestKey1 => "test_key_1",
                 Self::ProductionKey1 => "key_1",
             }
@@ -220,7 +232,7 @@ impl TryFrom<String> for EcdsaKeyIds {
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
         match s.as_str() {
-            "local_test_key" => Ok(Self::TestKeyLocalDevelopment),
+            "dfx_test_key" => Ok(Self::TestKeyLocalDevelopment),
             "test_key_1" => Ok(Self::TestKey1),
             "key_1" => Ok(Self::ProductionKey1),
             _ => Err(ParseEcdsaKeyIdError::UnknownKeyId),

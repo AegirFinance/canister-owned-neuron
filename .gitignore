@@ -16,3 +16,7 @@
 _build
 _out
 target
+
+# Project stuff
+/bin/
+.crates*

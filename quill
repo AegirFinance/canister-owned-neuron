@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]] || [[ -z "$1" ]]; then
+    printf "💎 Quill wrapper script:\n\n   usage: ./quill <local|ic|other> ...commands-for-quill...\n\n"
+    exit 1;
+fi
+
+QUILL="$DIR/bin/quill"
+
+if [[ ! -f "$QUILL" ]]; then
+    >&2 echo "Quill not found.\n\nThis repository depends on a special fork of Quill, please install it with:\n\n   ./scripts/install_quill.sh"
+    exit 1;
+fi
+
+NETWORK="${1:-local}"
+shift
+
+CANISTER_ID="$(dfx canister --network $NETWORK id signer)"
+if [[ -z "$CANISTER_ID" ]]; then
+    >&2 echo "Signer canister not found.\n\nPlease install it by running:\n\n   ./scripts/deploy.sh $NETWORK install local_test_key"
+    exit 1;
+fi
+
+FLAGS=""
+if [[ "$1" == "local" ]]; then
+    export IC_URL="http://localhost:$(dfx info replica-port)"
+    FLAGS="--insecure-local-dev-mode"
+fi
+
+IDENTITY_PEM="$(dfx identity export $(dfx identity whoami))"
+
+$QUILL \
+    --canister-id "$CANISTER_ID" \
+    --pem-file <(echo "$IDENTITY_PEM") \
+    "$@"
