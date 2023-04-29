@@ -27,7 +27,7 @@ Flow Diagram:
 ┌───────┐ Request    ┌─────────────────┐
 │       ├───────────►│                 │
 │ Quill │            │ Signer Canister │
-│       │◄───────────┤                 │
+│       │◄───────────┤ (Private Key)   │
 │       │ Signed Req └─────────────────┘
 │       │
 │       │ Signed Req ┌─────────────────┐
