@@ -87,7 +87,8 @@ $ ./quill ic public-ids
 
 ### Creating a neuron
 
-To create a neuron, we first need to transfer some ICP to the key owned by the signer canister. We can ask it for it's address, like:
+To create a neuron, we first need to transfer some ICP to the key owned by the
+signer canister. We can ask it for it's address, like:
 
 ```sh
 $ dfx canister call signer address
@@ -98,7 +99,10 @@ Then, we can transfer some ICP to that address. Note, we must transfer at least
 1.0001 ICP to pay for the new neuron, and the ICP transfer fee.
 
 ```sh
-$ dfx ledger transfer --memo 0 --amount 1.00010000 "c3d69b64bc40e92e1554fb5c0fb289d72d7faa7207dbc423fe68236566e1f581"
+$ dfx ledger transfer \
+    --memo 0 \
+    --amount 1.00010000 \
+    "c3d69b64bc40e92e1554fb5c0fb289d72d7faa7207dbc423fe68236566e1f581"
 ```
 
 At this point we are ready to stake a new neuron. Note, the amount here
