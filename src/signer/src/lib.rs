@@ -1,16 +1,9 @@
-use ic_cdk::{
-    api,
-    export::{
-        candid::CandidType,
-        serde::{Deserialize, Serialize},
-        Principal,
-    },
-    init, post_upgrade, pre_upgrade, storage, update,
-};
+use candid::{CandidType, Principal};
+use ic_cdk::{api, init, post_upgrade, pre_upgrade, storage, update};
 use ic_ledger_types::{AccountIdentifier, Subaccount, DEFAULT_SUBACCOUNT};
-use std::{cell::RefCell, str::FromStr};
-
-mod controller;
+use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
+use std::str::FromStr;
 
 thread_local! {
     static KEY_ID: RefCell<EcdsaKeyId> = RefCell::new(EcdsaKeyIds::TestKeyLocalDevelopment.to_key_id());
@@ -129,9 +122,8 @@ async fn public_key() -> Result<PublicKeyReply, String> {
     Ok(PublicKeyReply { public_key })
 }
 
-#[update]
+#[update(guard = "is_caller_controller")]
 async fn sign(message: Vec<u8>) -> Result<SignatureReply, String> {
-    controller::require(&api::caller()).await;
     assert!(message.len() == 32);
 
     let request = SignWithECDSA {
@@ -218,4 +210,13 @@ async fn get_public_key() -> Result<Vec<u8>, String> {
             .map_err(|e| format!("Failed to call ecdsa_public_key {}", e.1))?;
 
     Ok(res.public_key)
+}
+
+fn is_caller_controller() -> Result<(), String> {
+    let caller = ic_cdk::caller();
+    if ic_cdk::api::is_controller(&caller) {
+        Ok(())
+    } else {
+        Err("Caller does not control this canister".to_string())
+    }
 }
